@@ -33,7 +33,7 @@ const PlaybackPage: React.FunctionComponent = (props) => {
 	return (
 		<div className={`relative w-full h-full overflow-hidden`}>
 			<CrossfadeImage
-				src={playbackState?.item?.type === "track" ? playbackState.item.album?.images[0].url : ""}
+				src={playbackState?.item?.type === "track" ? playbackState.item.album?.images[0]?.url : ""}
 				containerClassName={`w-full h-full`}
 				imageClass={`rounded-2xl w-full h-full object-cover ${
 					playbackState?.is_playing ? "normal-img" : "grayscale-img"
