@@ -15,11 +15,26 @@ body {
 		height: 100vh;
 	}
 
-	.h-title {
-		height: 2rem;
+	.selectDisable {
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-o-user-select: none;
+		user-select: none;
+
+		user-drag: none;
 	}
 
-	.h-body {
-		height: calc(100% - 2rem);
+	.normal-img {
+		-webkit-filter: grayscale(0%);
+		-moz-filter: grayscale(0%);
+		filter: grayscale(0%);
+	}
+
+	.grayscale-img {
+		-webkit-filter: grayscale(100%);
+		-moz-filter: grayscale(100%);
+		filter: grayscale(100%);
+		transition: all 0.5s ease-out;
 	}
 }
