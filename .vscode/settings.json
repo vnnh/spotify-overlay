@@ -1,0 +1,66 @@
+{
+	"workbench.editor.highlightModifiedTabs": true,
+	"workbench.tree.indent": 18,
+	"workbench.tree.renderIndentGuides": "always",
+	"workbench.colorTheme": "Tokyo Night Storm",
+	"workbench.iconTheme": "material-icon-theme",
+	"workbench.productIconTheme": "material-product-icons",
+	"material-icon-theme.activeIconPack": "angular",
+	"material-icon-theme.folders.associations": {
+		"registry": "database",
+		"enum": "constant"
+	},
+	"window.title": "${dirty}${activeEditorShort}",
+	"css.validate": false,
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"editor.bracketPairColorization.enabled": true,
+	"files.eol": "\n",
+	"prettier.useTabs": true,
+	"eslint.lintTask.enable": true,
+	"eslint.validate": ["javascript", "javascriptreact", "svelte"],
+	"explorer.compactFolders": false,
+
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[rust]": {
+		"editor.defaultFormatter": "rust-lang.rust"
+	},
+	"typescript.preferences.importModuleSpecifier": "non-relative",
+
+	"terminal.integrated.profiles.windows": {
+		"PowerShell": {
+			"source": "PowerShell",
+			"icon": "terminal-powershell"
+		},
+		"Command Prompt": {
+			"path": ["${env:windir}\\Sysnative\\cmd.exe", "${env:windir}\\System32\\cmd.exe"],
+			"args": [],
+			"icon": "terminal-cmd"
+		},
+		"Git Bash": {
+			"source": "Git Bash"
+		}
+	},
+	"terminal.integrated.profiles.linux": {
+		"bash": {
+			"path": "bash",
+			"icon": "terminal-bash"
+		},
+		"zsh": {
+			"path": "zsh"
+		},
+		"fish": {
+			"path": "fish"
+		},
+		"tmux": {
+			"path": "tmux",
+			"icon": "terminal-tmux"
+		},
+		"pwsh": {
+			"path": "pwsh",
+			"icon": "terminal-powershell"
+		}
+	},
+	"terminal.integrated.defaultProfile.windows": "PowerShell",
+	"terminal.integrated.defaultProfile.linux": "zsh"
+}

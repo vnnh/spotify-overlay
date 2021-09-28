@@ -1,0 +1,8 @@
+node_modules
+out
+__pycache__
+.env
+.DS_Store
+dist
+dist-ssr
+*.local

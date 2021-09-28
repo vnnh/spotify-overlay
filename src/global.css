@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+	@apply w-full h-full p-0 m-0 bg-gray-900;
+
+	background-color: rgba(0, 0, 0, 0);
+}
+
+@layer utilities {
+	.root {
+		width: 100vw;
+		height: 100vh;
+	}
+
+	.h-title {
+		height: 2rem;
+	}
+
+	.h-body {
+		height: calc(100% - 2rem);
+	}
+}
