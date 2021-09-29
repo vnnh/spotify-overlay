@@ -144,7 +144,7 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
     let mut state: Option<CsrfToken> = None;
     let mut reader = BufReader::new(&stream);
     let mut request_line = String::new();
-    reader.read_line(&mut request_line);
+    reader.read_line(&mut request_line).await.unwrap();
 
     if request_line != str::from_utf8(&[1]).unwrap() {
       let redirect_url = request_line.split_whitespace().nth(1);
