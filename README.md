@@ -2,7 +2,7 @@
 <h4 align="center">A simple overlay that displays Spotify playback status</h4>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/90565423/135187531-ef435c22-9a3e-45d4-8942-6aad3c44be35.gif" alt="animated" />
+  <img src="https://user-images.githubusercontent.com/90565423/135193155-bd51fe90-3368-4d87-87f7-011b19014640.gif" alt="animated" />
 </p>
 
 ## Features
@@ -10,4 +10,3 @@
 * Image turns grayscale when playback stops
 
 More coming in the [future](https://github.com/vnnh/spotify-overlay/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement)!
-
