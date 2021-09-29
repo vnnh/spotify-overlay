@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { invoke } from "@tauri-apps/api";
 import { getItem, setItem } from "localforage";
 import CrossfadeImage from "src/components/CrossfadeImage";
+import { AuthenticationContext } from "src/context/authentication";
 
 const PlaybackPage: React.FunctionComponent = (props) => {
+	const { setAuthenticated } = useContext(AuthenticationContext);
 	const [playbackState, setPlaybackState] = useState<SpotifyApi.CurrentlyPlayingResponse | undefined>(undefined);
 
 	useEffect(() => {
@@ -11,14 +13,18 @@ const PlaybackPage: React.FunctionComponent = (props) => {
 			getItem("refresh_token").then((refreshToken) => {
 				invoke("get_playback_state", {
 					refreshToken,
-				}).then(async (response) => {
-					if (Array.isArray(response)) {
-						const playbackState = response[0] as SpotifyApi.CurrentlyPlayingResponse;
+				})
+					.then(async (response) => {
+						if (Array.isArray(response)) {
+							const playbackState = response[0] as SpotifyApi.CurrentlyPlayingResponse;
 
-						await setItem("refresh_token", response[1]);
-						setPlaybackState(playbackState);
-					}
-				});
+							await setItem("refresh_token", response[1]);
+							setPlaybackState(playbackState);
+						}
+					})
+					.catch(() => {
+						setAuthenticated(false);
+					});
 			});
 		};
 
