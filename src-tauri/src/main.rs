@@ -20,11 +20,10 @@ use std::env;
 use std::io::Write;
 use std::net::TcpStream;
 use std::str;
-use std::time::Duration;
 use tauri::{
-  command, generate_context, generate_handler, Manager, WindowBuilder, WindowEvent, WindowUrl,
+  command, generate_context, generate_handler, CustomMenuItem, Manager, SystemTray,
+  SystemTrayEvent, SystemTrayMenu, WindowBuilder, WindowEvent, WindowUrl,
 };
-use tokio::time::{timeout_at, Instant};
 use url::Url;
 
 fn create_client() -> BasicClient {
@@ -145,15 +144,7 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
     let mut state: Option<CsrfToken> = None;
     let mut reader = BufReader::new(&stream);
     let mut request_line = String::new();
-    if let Err(_) = timeout_at(
-      Instant::now() + Duration::from_millis(10),
-      reader.read_line(&mut request_line),
-    )
-    .await
-    {
-      //https://github.com/vnnh/spotify-overlay/issues/2
-      println!("err");
-    }
+    reader.read_line(&mut request_line);
 
     if request_line != str::from_utf8(&[1]).unwrap() {
       let redirect_url = request_line.split_whitespace().nth(1);
@@ -223,7 +214,20 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
 fn main() {
   dotenv().ok();
 
+  let tray = SystemTray::new()
+    .with_menu(SystemTrayMenu::new().add_item(CustomMenuItem::new("logout", "Logout")));
+
   tauri::Builder::default()
+    .system_tray(tray)
+    .on_system_tray_event(|app, event| match event {
+      SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+        "logout" => {
+          app.emit_all("reauthenticate", true).unwrap();
+        }
+        _ => {}
+      },
+      _ => {}
+    })
     .invoke_handler(generate_handler![authenticate_user, get_playback_state])
     .run(generate_context!())
     .expect("error while running tauri application");
