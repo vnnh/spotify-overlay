@@ -7,7 +7,6 @@ use async_std::io::prelude::BufReadExt;
 use async_std::io::BufReader;
 use async_std::net::TcpStream as AsyncTcpStream;
 use async_std::{net::TcpListener, prelude::*};
-use dotenv::dotenv;
 use oauth2::basic::BasicClient;
 use oauth2::http::{HeaderMap, Method};
 use oauth2::reqwest::async_http_client;
@@ -16,7 +15,6 @@ use oauth2::{
   AccessToken, AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, PkceCodeChallenge,
   RedirectUrl, RefreshToken, Scope, TokenResponse, TokenUrl,
 };
-use std::env;
 use std::io::Write;
 use std::net::TcpStream;
 use std::str;
@@ -28,12 +26,11 @@ use url::Url;
 
 fn create_client() -> BasicClient {
   BasicClient::new(
-    ClientId::new(
-      env::var("SPOTIFY_CLIENT_ID").expect("Missing the SPOTIFY_CLIENT_ID environment variable"),
-    ),
-    Some(ClientSecret::new(env::var("SPOTIFY_CLIENT_SECRET").expect(
-      "Missing the SPOTIFY_CLIENT_SECRET environment variable",
-    ))),
+    ClientId::new("39e0135aefc649cba0e0fc02b0433830".to_string()),
+    Some(ClientSecret::new(
+      "39e0135aefc649cba0e0fc02b0433831".to_string(),
+    )),
+    //This isn't the real secret, for some reason Spotify returns an error unless the ClientSecret is something that is the same length(? haven't tested)
     AuthUrl::new("https://accounts.spotify.com/authorize".to_string()).unwrap(),
     Some(TokenUrl::new("https://accounts.spotify.com/api/token".to_string()).unwrap()),
   )
@@ -176,12 +173,9 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
 
       match (code, state) {
         (Some(code), Some(state)) => {
-          println!("Spotify returned the following code:\n{}\n", code.secret());
-          println!(
-            "Spotify returned the following state:\n{} (expected `{}`)\n",
-            state.secret(),
-            csrf_token.secret()
-          );
+          if state.secret() != csrf_token.secret() {
+            ()
+          }
 
           let token = client
             .exchange_code(code)
@@ -212,8 +206,6 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
 }
 
 fn main() {
-  dotenv().ok();
-
   let tray = SystemTray::new()
     .with_menu(SystemTrayMenu::new().add_item(CustomMenuItem::new("logout", "Logout")));
 
