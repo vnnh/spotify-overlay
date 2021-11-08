@@ -5,12 +5,14 @@ import { listen } from "@tauri-apps/api/event";
 import { AuthenticationContext, AuthenticationProvider } from "src/context/authentication";
 import AuthenticatePage from "src/pages/authenticate";
 import PlaybackPage from "src/pages/playback";
+import { removeItem } from "localforage";
 
 const StatusCard: React.FunctionComponent = () => {
 	const { authenticated, setAuthenticated } = useContext(AuthenticationContext);
 	useEffect(() => {
 		let unlistenFn: () => void;
 		listen("reauthenticate", (event) => {
+			removeItem("refresh_token");
 			setAuthenticated(false);
 		}).then((value) => {
 			unlistenFn = value;

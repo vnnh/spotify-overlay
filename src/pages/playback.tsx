@@ -98,6 +98,126 @@ const PlaybackPage: React.FunctionComponent = (props) => {
 							: ""}
 					</p>
 				</div>
+				<div className={`absolute bg-green-900 h-8 top-0 left-0 pl-3 pr-3`}>
+					<div className={`h-full flex flex-row justify-center`}>
+						<button
+							className={`w-auto h-full`}
+							onPointerDown={() => {
+								getItem("refresh_token").then((refreshToken) => {
+									invoke("modify_player", {
+										refreshToken,
+										action: "prev",
+									})
+										.then(async (response) => {
+											if (Array.isArray(response)) {
+												await setItem("refresh_token", response[1]);
+											}
+										})
+										.catch(() => {
+											setAuthenticated(false);
+										});
+								});
+							}}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 0 24 24"
+								width="24px"
+								fill="#FFFFFF"
+							>
+								<path d="M0 0h24v24H0z" fill="none" />
+								<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+							</svg>
+						</button>
+						<div className={`w-1`} />
+						<button
+							className={`w-auto h-full`}
+							onPointerDown={() => {
+								getItem("refresh_token").then((refreshToken) => {
+									invoke("modify_player", {
+										refreshToken,
+										action: playbackState?.is_playing ? "pause" : "play",
+									})
+										.then(async (response) => {
+											if (Array.isArray(response)) {
+												const result: boolean = response[0];
+
+												if (playbackState !== undefined) {
+													const newPlaybackState = { ...playbackState };
+													if (result === true) {
+														newPlaybackState.is_playing = !newPlaybackState.is_playing;
+													}
+
+													setPlaybackState(newPlaybackState);
+												}
+
+												await setItem("refresh_token", response[1]);
+											}
+										})
+										.catch(() => {
+											setAuthenticated(false);
+										});
+								});
+							}}
+						>
+							{playbackState?.is_playing ? (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 0 24 24"
+									width="24px"
+									fill="#FFFFFF"
+								>
+									<path d="M0 0h24v24H0z" fill="none" />
+									<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+								</svg>
+							) : (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 0 24 24"
+									width="24px"
+									fill="#FFFFFF"
+								>
+									<path d="M0 0h24v24H0z" fill="none" />
+									<path d="M8 5v14l11-7z" />
+								</svg>
+							)}
+						</button>
+						<div className={`w-1`} />
+						<button
+							className={`w-auto h-full`}
+							onPointerDown={() => {
+								getItem("refresh_token").then((refreshToken) => {
+									invoke("modify_player", {
+										refreshToken,
+										action: "next",
+									})
+										.then(async (response) => {
+											if (Array.isArray(response)) {
+												await setItem("refresh_token", response[1]);
+											}
+										})
+										.catch(() => {
+											setAuthenticated(false);
+										});
+								});
+							}}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="24px"
+								viewBox="0 0 24 24"
+								width="24px"
+								fill="#FFFFFF"
+							>
+								<path d="M0 0h24v24H0z" fill="none" />
+								<path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+							</svg>
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

@@ -8,5 +8,6 @@
 ## Features
 * Image crossfade between tracks
 * Image turns grayscale when playback stops
+* Playback controls (only for accounts with Spotify Premium)
 
 More coming in the [future](https://github.com/vnnh/spotify-overlay/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement)!

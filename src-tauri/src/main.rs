@@ -89,6 +89,77 @@ async fn get_playback_state(
 }
 
 #[command]
+async fn modify_player(
+  app_handle: tauri::AppHandle,
+  refresh_token: String,
+  action: &str,
+) -> Result<(bool, String), ()> {
+  let get_result = get_access_token(refresh_token).await;
+  if let Ok((access_token, refresh_token)) = get_result {
+    let mut headers = HeaderMap::new();
+    headers.insert("Accept", "application/json".parse().unwrap());
+    headers.insert("Content-Type", "application/json".parse().unwrap());
+    headers.insert(
+      "Authorization",
+      format!("Bearer {}", access_token.secret()).parse().unwrap(),
+    );
+
+    let response = match action {
+      "prev" => Some(
+        async_http_client(HttpRequest {
+          url: Url::parse("https://api.spotify.com/v1/me/player/previous").unwrap(),
+          method: Method::POST,
+          headers: headers,
+          body: vec![],
+        })
+        .await
+        .unwrap(),
+      ),
+      "next" => Some(
+        async_http_client(HttpRequest {
+          url: Url::parse("https://api.spotify.com/v1/me/player/next").unwrap(),
+          method: Method::POST,
+          headers: headers,
+          body: vec![],
+        })
+        .await
+        .unwrap(),
+      ),
+      "pause" => Some(
+        async_http_client(HttpRequest {
+          url: Url::parse("https://api.spotify.com/v1/me/player/pause").unwrap(),
+          method: Method::PUT,
+          headers: headers,
+          body: vec![],
+        })
+        .await
+        .unwrap(),
+      ),
+      "play" => Some(
+        async_http_client(HttpRequest {
+          url: Url::parse("https://api.spotify.com/v1/me/player/play").unwrap(),
+          method: Method::PUT,
+          headers: headers,
+          body: vec![],
+        })
+        .await
+        .unwrap(),
+      ),
+      _ => None,
+    };
+
+    if let Some(r) = response {
+      Ok((r.status_code.is_success(), refresh_token.secret().clone()))
+    } else {
+      Ok((false, refresh_token.secret().clone()))
+    }
+  } else {
+    app_handle.emit_all("reauthenticate", true).unwrap();
+    Err(())
+  }
+}
+
+#[command]
 async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String>, ()> {
   if app_handle.get_window("Authorization").is_some() {
     return Ok(None);
@@ -102,6 +173,7 @@ async fn authenticate_user(app_handle: tauri::AppHandle) -> Result<Option<String
     .authorize_url(CsrfToken::new_random)
     .add_scope(Scope::new("user-read-currently-playing".to_string()))
     .add_scope(Scope::new("user-read-playback-state".to_string()))
+    .add_scope(Scope::new("user-modify-playback-state".to_string()))
     .set_pkce_challenge(pkce_challenge)
     .url();
 
@@ -220,7 +292,11 @@ fn main() {
       },
       _ => {}
     })
-    .invoke_handler(generate_handler![authenticate_user, get_playback_state])
+    .invoke_handler(generate_handler![
+      authenticate_user,
+      get_playback_state,
+      modify_player
+    ])
     .run(generate_context!())
     .expect("error while running tauri application");
 }
